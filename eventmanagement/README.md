@@ -9,5 +9,4 @@ This is a backend project for an **Event Management System**. The goal of the pr
 - Maven
 
 ## 📚 Purpose
-
 This project is part of a backend development course and serves as a practical implementation of backend architecture, API design, and database integration.
