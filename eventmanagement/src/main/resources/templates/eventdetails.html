@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Details</title>
+</head>
+<body>
+    <h1>Edit event</h1>
+
+    <form th:action="@{/events/{id}(id=${event.id})}" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" th:value="${event.name}" required>
+        <br><br>
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" th:value="${event.description}" required>
+        <br><br>
+
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" th:value="${event.location}" required>
+        <br><br>
+
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" th:value="${event.date}" required>
+        <br><br>
+
+        <label for="time">Time:</label>
+        <input type="time" id="time" name="time" th:value="${event.time}" required>
+        <br><br>
+
+        <button type="submit" style="padding: 10px 20px; background-color: #007BFF; color: white; border: none; border-radius: 5px;">Save Changes</button>
+    </form>
+
+    <br>
+    <a th:href="@{/events}" style="display: inline-block; padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px;">Back</a>
+</body>
+</html>
