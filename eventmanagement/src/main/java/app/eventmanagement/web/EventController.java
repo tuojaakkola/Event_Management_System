@@ -3,36 +3,33 @@ package app.eventmanagement.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-
-import app.eventmanagement.domain.EventRepository;
 import app.eventmanagement.service.EventService;
 import app.eventmanagement.domain.Event;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 // This class will contain methods to handle HTTP requests related to events
 @Controller
 public class EventController {
 
-    // Autowiring the repositories to handle database operations
-    @Autowired
-    private EventRepository eventRepository;
+    // Autowiring the service class to access event-related operations
     @Autowired
     private EventService eventService;
 
-    // This methodd will display the home page
-    @GetMapping("/")
-    public String showHomepage() {
-        return "index"; 
+    // This method will display the login page of the application
+    @GetMapping("/login")
+    public String showLogin() {
+        return "login"; // login.html tiedosto templates-kansiossa
     }
 
     // This method will display the list of events
     @GetMapping("/events")
     public String showEvents(Model model) {
-        model.addAttribute("events", eventRepository.findAll());
+        model.addAttribute("events", eventService.getAllEvents());
         return "eventlist";
     }
 
@@ -46,30 +43,36 @@ public class EventController {
     // This method handles the form submission for adding a new event
     @PostMapping("/events")
     public String saveEvent(@ModelAttribute Event event) {
-        eventRepository.save(event); 
+        eventService.saveEvent(event); 
         return "redirect:/events"; 
     }
 
     // This method will display the form to edit an existing event
     @GetMapping("/events/{id}")
-    public String showEventDetails(@PathVariable Long id, Model model) {
-        Event event = eventRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid event ID: " + id));
-        model.addAttribute("event", event);
+    public String showEventDetails(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("event", eventService.getEventById(id));
         return "eventdetails";
     }
 
     // This method handles the form submission for updating an existing event
     @PostMapping("/events/{id}")
-    public String updateEvent(@PathVariable Long id, @ModelAttribute Event event) {
-        Event existingEvent = eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid event ID: " + id));
-        existingEvent.setName(event.getName());
-        existingEvent.setDescription(event.getDescription());
-        existingEvent.setLocation(event.getLocation());
-        existingEvent.setDate(event.getDate());
-        existingEvent.setTime(event.getTime());
-        eventRepository.save(existingEvent);
+    public String updateEvent(@PathVariable("id") Long id, @ModelAttribute Event event) {
+        eventService.updateEvent(id, event);
         return "redirect:/events";
     }
-    
+
+    // This method will handle the deletion of an event
+    @PostMapping("/events/{id}/delete")
+    public String deleteEvent(@PathVariable("id") Long id) {
+        eventService.deleteEvent(id);
+        return "redirect:/events";
+    }
+
+    // This method will display the search form for events 
+    @GetMapping("/events/search")
+    public String searchEvents(@RequestParam("query") String query, Model model) {
+        model.addAttribute("events", eventService.searchEvents(query));
+        return "eventlist";
+    }
+
 }

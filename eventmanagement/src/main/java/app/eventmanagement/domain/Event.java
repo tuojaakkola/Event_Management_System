@@ -1,5 +1,9 @@
 package app.eventmanagement.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,17 +13,19 @@ import jakarta.persistence.Id;
 @Entity
 public class Event {
 
-    // Unique identifier for each event created by the database
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
 
     public String name;
     public String description;
     public String location;
     public String date;
     public String time;
+
+    // Set to store usernames of users who liked the event
+    @ElementCollection
+    private Set<String> likedBy = new HashSet<>();
 
     //Empty constructor for JPA
     public Event() {
@@ -83,5 +89,12 @@ public class Event {
         this.time = time;
     }
 
+    public Set<String> getLikedBy() {
+        return likedBy;
+    }
+
+    public void setLikedBy(Set<String> likedBy) {
+        this.likedBy = likedBy;
+    }
 
 }

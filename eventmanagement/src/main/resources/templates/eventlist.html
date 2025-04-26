@@ -1,14 +1,26 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Eventlist</title>
+    <title>Event List</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <h1>Eventlist</h1>
+    <h1>Event List</h1>
 
-    <a th:href="@{/events/add}" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 5px;">Add Event</a>
-    <br><br>
+    <form th:action="@{/events/search}" method="get">
+        <input type="text" name="query" placeholder="Search events...">
+        <button type="submit">Search</button>
+    </form>
+
+    <div>
+        <a th:href="@{/events/add}">Add Event</a>
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+
+    <div id="alert" style="display: none;"></div>
 
     <table border="1">
         <thead>
@@ -29,10 +41,40 @@
                 <td th:text="${event.date}"></td>
                 <td th:text="${event.time}"></td>
                 <td>
-                    <a th:href="@{/events/{id}(id=${event.id})}">Edit</a>
+                    <button th:onclick="|likeEvent([[${event.id}]])|">Like</button>
+
+                    <span id="like-count-[[${event.id}]]" th:text="${#lists.size(event.likedBy)} + ' Likes'"></span>
+
+                    <a th:href="@{/events/{id}(id=${event.id})}" sec:authorize="hasRole('MODERATOR')">Edit</a>
+
+                    <form th:action="@{/events/{id}/delete(id=${event.id})}" method="post" sec:authorize="hasRole('MODERATOR')" style="display: inline;">
+                        <button type="submit">Delete</button>
+                    </form>
                 </td>
             </tr>
         </tbody>
     </table>
+
+    <!-- JavaScript for Liking Event -->
+    <script>
+        function likeEvent(eventId) {
+            $.ajax({
+                url: '/api/events/' + eventId + '/like',
+                type: 'POST',
+                success: function(response) {
+                    
+                    $('#alert').text(response).show();
+
+                    let likeCountSpan = $('#like-count-' + eventId);
+                    let currentLikes = parseInt(likeCountSpan.text());
+                    likeCountSpan.text((currentLikes + 1) + ' Likes');
+                }
+            });
+        }
+    </script>
 </body>
 </html>
+
+<!-- ## This HTML template is for viewing the list of events and allows users to
+        like events, edit, and delete them if they have the appropriate role. 
+ -->
