@@ -21,7 +21,7 @@ public class EventmanagementApplication {
 	@Bean
     public CommandLineRunner loadTestData(PersonRepository personRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            personRepository.save(new Person("moderator", passwordEncoder.encode("mod123"), Set.of("MODERATOR")));  
+           // personRepository.save(new Person("moderator", passwordEncoder.encode("mod123"), Set.of("MODERATOR")));  
         };
     }
 
