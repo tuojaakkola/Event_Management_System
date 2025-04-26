@@ -36,3 +36,11 @@ tasks.named('test') {
 bootJar {
     mainClass = 'app.eventmanagement.EventManagementApplication' 
 }
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'app.eventmanagement.EventManagementApplication' 
+        )
+    }
+}
